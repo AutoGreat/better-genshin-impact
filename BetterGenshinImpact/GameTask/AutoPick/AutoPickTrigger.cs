@@ -310,6 +310,8 @@ public partial class AutoPickTrigger : ITaskTrigger
                 return;
             }
 
+            return;
+
             speedTimer.Record("白名单判断");
 
             if (isExcludeIcon)
