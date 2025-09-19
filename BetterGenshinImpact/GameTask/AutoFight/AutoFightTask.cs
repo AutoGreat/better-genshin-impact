@@ -497,7 +497,7 @@ public class AutoFightTask : ISoloTask
                         kazuha.UseSkill(true);
                         await Task.Delay(100);
                         Simulation.SendInput.SimulateAction(GIActions.NormalAttack);
-                        await Delay(1500, ct);
+                        await Delay(3000, ct);
                     }
                 }
                 else
