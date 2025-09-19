@@ -131,6 +131,8 @@ public partial class AutoPickTrigger : ITaskTrigger
 
     //private int _fastModePickCount = 0;
 
+    private int _mouseScrollCount = 0;
+
     public void OnCapture(CaptureContent content)
     {
         while (RunnerContext.Instance.AutoPickTriggerStopCount > 0)
@@ -315,6 +317,21 @@ public partial class AutoPickTrigger : ITaskTrigger
                 Simulation.SendInput.Keyboard.KeyPress(AutoPickAssets.Instance.PickVk);
                 return;
             }
+
+            if (_mouseScrollCount >= 0) {
+                Simulation.SendInput.Mouse.VerticalScroll(1);
+                _mouseScrollCount += 1;
+                if (_mouseScrollCount > 10) {
+                    _mouseScrollCount = -1;
+                }
+            } else {
+                Simulation.SendInput.Mouse.VerticalScroll(-1);
+                _mouseScrollCount -= 1;
+                if (_mouseScrollCount < -10) {
+                    _mouseScrollCount = 1;
+                }
+            }
+            Thread.Sleep(100);            
 
             return;
 
