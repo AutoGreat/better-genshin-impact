@@ -94,6 +94,7 @@ public class Avatar
         NameRect = nameRect;
         CombatAvatar = DefaultAutoFightConfig.CombatAvatarMap[name];
         ManualSkillCd = manualSkillCd;
+        AutoFightTask.FightStatusFlag = false;
     }
 
 
@@ -290,20 +291,35 @@ public class Avatar
 
     private void Offset60Fix(int i)
     {
-        // 6.0 特殊逻辑
-        if (i > 3 && CombatScenes.IndexRectOffset60Fix)
+        // 3次失败考虑是否偏移出现问题，修改偏移位置
+        if (i <= 2 || AutoFightTask.FightStatusFlag)
         {
-            // 3次失败考虑是否偏移出现问题，修改偏移位置
-            // 只有 草露 角色离队，然后跨地图传送后，会出现这个场景。也就是只有 偏移 -> 原始 的场景
+            return;
+        }
+        
+        if (CombatScenes.IndexRectOffset60Fix)
+        {
             foreach (var avatar in CombatScenes.GetAvatars())
             {
-                var rect1 = avatar.IndexRect;
-                rect1.Y += 14;
+                var originalRect = AutoFightAssets.Instance.AvatarIndexRectList[avatar.Index - 1];
+                var rect1 = new Rect(originalRect.X, originalRect.Y, originalRect.Width, originalRect.Height);
+                avatar.IndexRect = rect1;
+            }
+            CombatScenes.IndexRectOffset60Fix = false;
+        }
+        else
+        {
+            foreach (var avatar in CombatScenes.GetAvatars())
+            {
+                var originalRect = AutoFightAssets.Instance.AvatarIndexRectList[avatar.Index - 1];
+                var rect1 = new Rect(originalRect.X, originalRect.Y, originalRect.Width, originalRect.Height);
+                rect1.Y -= 14;
                 avatar.IndexRect = rect1;
             }
 
-            CombatScenes.IndexRectOffset60Fix = false;
+            CombatScenes.IndexRectOffset60Fix = true;
         }
+        
     }
 
     /// <summary>
